@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, mongo } from "mongoose";
 
 export interface User extends Document {
-  id: string;
+  username: string;
   name: string;
   email: string;
   password: string;
@@ -13,7 +13,7 @@ export interface User extends Document {
 }
 
 const userSchema: Schema<User> = new Schema({
-  id: {
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -28,7 +28,7 @@ const userSchema: Schema<User> = new Schema({
     type: String,
     required: true,
     unique: true,
-    match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
+    match: [/^\S+@\S+\.\S+$/, "Please use a username email address"],
   },
   password: {
     type: String,
