@@ -1,0 +1,66 @@
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import dbConnect from "@/lib/dbConnect";
+import userModel from "@/models/Users.model";
+
+export const authOption: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      id: "credentials",
+      name: "Credentials",
+
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "example@email.com",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials: any): Promise<any> {
+        dbConnect();
+
+        try {
+          const user = await userModel.findOne({
+            $or: [
+              { email: credentials.identifier },
+              { id: credentials.identifier },
+            ],
+          });
+
+          if (!user) {
+            throw new Error("No such user already exists :(");
+          } else {
+            if (!user.isVerified) {
+              throw new Error("Please verify your account before you login...");
+            } else {
+              //means user exists and lets check the password
+              const isPasswordCorrect = await bcrypt.compare(
+                credentials.password,
+                user.password
+              );
+
+              if (isPasswordCorrect) {
+                //checking password
+                return user;
+              } else {
+                throw new Error("Wrong password mate!");
+              }
+            }
+          }
+        } catch (error: any) {
+          throw new Error(error);
+        }
+      },
+    }),
+  ],
+
+  pages: {
+    signIn: "/sign-in",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXT_AUTH_SECRET_KEY,
+};
