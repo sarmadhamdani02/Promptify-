@@ -6,6 +6,9 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const url = request.nextUrl;
 
+  console.log("Token in middleware:", token);
+
+
   const isAuthPage =
     url.pathname.startsWith("/sign-in") ||
     url.pathname.startsWith("/sign-up") ||
@@ -31,11 +34,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/verify/:path*",
-    "/sign-in",
-    "/sign-up",
-    "/",
-  ],
+  matcher: ["/dashboard/:path*", "/verify/:path*", "/sign-in", "/sign-up", "/"],
 };
