@@ -6,6 +6,7 @@ export interface User extends Document {
   email: string;
   password: string;
   verifyCode: string;
+  verifyCodeExpiry:Date;
   createdAt: Date;
   updatedAt: Date;
   role: "admin" | "user";
@@ -28,7 +29,7 @@ const userSchema: Schema<User> = new Schema({
     type: String,
     required: true,
     unique: true,
-    match: [/^\S+@\S+\.\S+$/, "Please use a username email address"],
+    match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
   },
   password: {
     type: String,
@@ -38,6 +39,10 @@ const userSchema: Schema<User> = new Schema({
   verifyCode: {
     type: String,
     required: [true, "Verify Code is required"],
+  },
+  verifyCodeExpiry: {
+    type: Date,
+    required: [true, "Verify Code Expiry is required"], // Ensure this field is required
   },
   role: {
     type: String,
@@ -57,7 +62,6 @@ const userSchema: Schema<User> = new Schema({
     default: Date.now,
   },
 });
-
 const userModel = (mongoose.models.User as mongoose.Model<User>) || mongoose.model<User>("User",userSchema);
 
 export default userModel;

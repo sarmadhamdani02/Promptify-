@@ -59,6 +59,7 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         verifyCode: otp,
+        verifyCodeExpiry: expiryDate,
         createdAt: new Date(),
         updatedAt: new Date(),
         role: "user",
