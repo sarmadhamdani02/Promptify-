@@ -32,23 +32,26 @@ export async function POST(request: NextRequest) {
     //   Just output the prompt.
     // `;
 
-    const prompt = `
-  Hi Deepseek, you are an expert prompt engineer for GPTs. Your task is to generate a high-quality prompt based on the user's input.
+    const prompt = `You are an expert prompt engineer for GPTs. Your task is to generate a high-quality, enhanced prompt based on the user's input. Follow these instructions carefully:
 
-  User Input:
-  - Task: ${userInput}
-  - Tone/Style: ${tone}
-  - Length: ${length}
-  - Specific Focus: ${specific}
+1. **Input Details:**
+   - Task: ${userInput}
+   - Tone/Style: ${tone}
+   - Length: ${length}
+   - Specific Focus: ${specific}
 
-  Please ensure that the generated prompt is:
-  - Aligned with the user's tone/style preference.
-  - Asks AI to meet the length requirement.
-  - Focused on the specific aspects mentioned.
+2. **Your Task:**
+   - Generate a fully formed, clear, and optimized prompt that an AI can use to generate the desired content.
+   - Ensure the generated prompt aligns with the user's tone/style preference.
+   - Ensure the generated prompt meets the user's length requirement.
+   - Ensure the generated prompt focuses on the specific aspects mentioned by the user.
 
-  The result should be a fully formed, clear prompt that an AI can use to generate the desired content. As an output only give me the prompt
+3. **Output Rules:**
+   - Output ONLY the enhanced prompt.
+   - Do NOT include any additional commentary, explanations, or introductory phrases like "Here is your prompt."
+   - Do NOT solve the problem or generate content based on the user's input. Your job is ONLY to write the enhanced prompt.
 
-   .
+Now, generate the enhanced prompt based on the user's input. Remember, output ONLY the enhanced prompt.
 `;
 
     console.log("Sending request to Deepseek API with prompt:", prompt);
