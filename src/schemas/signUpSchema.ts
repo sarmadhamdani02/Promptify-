@@ -13,6 +13,8 @@ export const signupSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password must be at most 100 characters"),
 
+    
+
   verifyCode: z
     .string()
     .length(6, "Verification code must be 6 characters")
