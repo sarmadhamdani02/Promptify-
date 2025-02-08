@@ -12,7 +12,7 @@ import PromptifyLogo from "@/components/PromptifyLogo";
 
 import { SparklesText } from "@/components/sparkles-text";
 
-import { LoaderPinwheel} from 'lucide-react';
+import { LoaderPinwheel } from 'lucide-react';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -109,7 +109,7 @@ const SignUpPage = () => {
 
                 {/* Logo */}
                 <PromptifyLogo />
-              
+
 
                 <h2 className="text-center text-2xl font-semibold text-gray-800 mt-4">
                     Create an account!
@@ -234,7 +234,7 @@ const SignUpPage = () => {
                     <p className="text-sm text-gray-600">
                         Already a member?{' '}
                         <Link href="/sign-in" className="text-blue-600 hover:text-blue-500 font-medium">
-                            Sign In
+                            Log In
                         </Link>
                     </p>
                 </div>

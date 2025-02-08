@@ -10,7 +10,7 @@ const PromptifyLogo = ({
     return (
         <a href='' className={`flex items-center justify-center gap-0 text-4xl font-bold text-gray-900 ${className}`}>
             <span className={` ${textClassName}`}>P</span>
-            <Zap className={`${zapClassName}`} size={{zapSize}} />
+            <Zap className={`${zapClassName}`} size={zapSize} />
             <span className={` ${textClassName}`}>omptify</span>
         </a>
     )

@@ -28,7 +28,7 @@ export async function GET(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Invalid username format",
+          message: usernameErrorMessage,
           errors: usernameErrorMessage,
         },
         { status: 400 }
