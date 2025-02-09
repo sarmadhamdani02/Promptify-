@@ -5,6 +5,26 @@ import * as z from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea"
+import { useSession, signOut } from "next-auth/react";
+import Navbar from "@/components/Navbar";
+
+import { User } from "next-auth";
+
+import { Copy, Save } from "lucide-react"
+
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+
 import {
   Form,
   FormControl,
@@ -15,8 +35,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import PromptifyLogo from "@/components/PromptifyLogo";
+import axios from "axios";
+import { useState } from "react";
 
 const formSchema = z.object({
   tone: z.string().optional(),
@@ -27,27 +48,65 @@ const formSchema = z.object({
 
 const HomePage = () => {
   const { toast } = useToast();
+  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [enhancedPrompt, setEnhancedPrompt] = useState("");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      userInput: "",
       tone: "",
       length: "",
-      prompt: "",
-      specificInput: "",
+      specific: "",
     }
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    toast({
-      title: "Generated Output",
-      description: "Your output has been generated successfully!",
-    });
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsGeneratingPrompt(true);
+
+    if (!data) {
+      toast({
+        title: "Error",
+        description: "Please fill out all required fields",
+      });
+      setIsGeneratingPrompt(false);
+    } else {
+      try {
+        const response = await axios.post("/api/promptify", {
+          userInput: data.prompt?.toString(),
+          tone: data.tone?.toString(),
+          length: data.length?.toString(),
+          specific: data.specificInput?.toString()
+        });
+
+        setEnhancedPrompt(response.data.enhancedPrompt);
+        setIsDrawerOpen(true);
+      } catch (error) {
+        toast({
+          title: "Some Error Occured",
+          description: "Promptify couldn't promptified the prompt, Please Promptify Again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsGeneratingPrompt(false);
+      }
+    }
   };
+
+  const onClickCopy = () => {
+    navigator.clipboard.writeText(enhancedPrompt);
+    toast({
+      title: "Copied!",
+      description: "Enhanced Prompt has been copied to your clipboard",
+    });
+  }
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8 bg-blue-50">
+      <Navbar/>
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         {/* Logo */}
         <PromptifyLogo />
@@ -146,12 +205,57 @@ const HomePage = () => {
             />
 
             {/* Generate Output Button */}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
-              Generate Output
+            <Button disabled={isGeneratingPrompt} type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
+              {isGeneratingPrompt ? <p>Promptifying..</p> : "Promptify"}
             </Button>
+
+
           </form>
         </Form>
       </div>
+
+      {/* Drawer to display enhanced prompt */}
+
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DrawerContent className=" ">
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center justify-center">Generated Prompt</DrawerTitle>
+            <DrawerDescription>Here is your enhanced prompt:</DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4 px-10 flex">
+            <Textarea
+              className="bg-blue-50 px-4 py-6 rounded-lg w-[90%]"
+              value={enhancedPrompt}
+              onChange={(e) => setEnhancedPrompt(e.target.value)}
+            />
+            <div className=" flex h-auto items-center justify-evenly flex-col">
+
+              <Button
+                variant="default"
+                className="ml-4 w-full border border-blue-200 hover:text-white hover:bg-blue-700 bg-blue-500"
+                onClick={() => onClickCopy()}
+              >
+                <Copy />Copy
+              </Button>
+              <Button
+                variant="default"
+                className="ml-4 w-full border border-blue-200 hover:text-white hover:bg-blue-700 bg-blue-500"
+                disabled="true"
+              >
+                <Save />Save
+              </Button>
+            </div>
+          </div>
+          <DrawerFooter className="flex items-center justify-center">
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-[40%] border border-blue-200 hover:border-blue-500 hover:text-blue-500">
+                Close
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
     </div>
   );
 };
