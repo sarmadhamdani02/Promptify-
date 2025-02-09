@@ -20,6 +20,7 @@ const Navbar = () => {
     //     `Hi, ${user?.name}!`,
     //     `Hello, ${user?.name}!`,
     //     `Greetings, ${user?.name}!`,
+    //     `Salam!, ${user?.name}!`,
     // ];
 
     return (
