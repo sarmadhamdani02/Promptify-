@@ -98,8 +98,9 @@ export const SparklesText: React.FC<SparklesTextProps> = ({
       const starX = `${Math.random() * 100}%`;
       const starY = `${Math.random() * 100}%`;
       const color = Math.random() > 0.5 ? colors.first : colors.second;
-      const delay = Math.random() * 2;
-      const scale = Math.random() * 1 + 0.3;
+      const delay = 2 + Math.random() * 10; // Delay will be between 2 to 7 seconds
+
+      const scale = Math.random() * 0.1;
       const lifespan = Math.random() * 10 + 5;
       const id = `${starX}-${starY}-${Date.now()}`;
       return { id, x: starX, y: starY, color, delay, scale, lifespan };

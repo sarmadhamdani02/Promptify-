@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea"
 import { useSession, signOut } from "next-auth/react";
+import {AnimatedShinyText } from "../../../components/magicui/animated-shiny-text.tsx"
 import Navbar from "@/components/Navbar";
 
 import { User } from "next-auth";
@@ -106,7 +107,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8 bg-blue-50">
-      <Navbar/>
+      <Navbar />
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         {/* Logo */}
         <PromptifyLogo />
@@ -223,11 +224,14 @@ const HomePage = () => {
             <DrawerDescription>Here is your enhanced prompt:</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 px-10 flex">
-            <Textarea
-              className="bg-blue-50 px-4 py-6 rounded-lg w-[90%]"
-              value={enhancedPrompt}
-              onChange={(e) => setEnhancedPrompt(e.target.value)}
-            />
+
+            <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+              <Textarea
+                className="bg-blue-50 px-4 py-6 rounded-lg w-[90%]"
+                value={enhancedPrompt}
+                onChange={(e) => setEnhancedPrompt(e.target.value)}
+              />
+            </AnimatedShinyText>
             <div className=" flex h-auto items-center justify-evenly flex-col">
 
               <Button
