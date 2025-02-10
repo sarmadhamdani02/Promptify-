@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, mongo } from "mongoose";
 
 export interface Prompt extends Document {
-  id: string;
   userId: string;
   inputText: string;
   responseText: string;
@@ -10,11 +9,7 @@ export interface Prompt extends Document {
 }
 
 const promptSchema: Schema<Prompt> = new Schema({
-  id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+
   userId: {
     type: String,
     required: true,
@@ -39,6 +34,8 @@ const promptSchema: Schema<Prompt> = new Schema({
   },
 });
 
-const promptModel = mongoose.Model<Prompt> || mongoose.model<Prompt>("Prompt", promptSchema);
+
+
+const promptModel = mongoose.models.Prompt || mongoose.model<Prompt>("Prompt", promptSchema);
 
 export default promptModel;
