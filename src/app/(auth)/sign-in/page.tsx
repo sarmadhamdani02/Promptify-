@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from 'react';
 import { signIn } from "next-auth/react";
 
-const SignUpPage = () => {
+const SignInPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
@@ -49,8 +49,7 @@ const SignUpPage = () => {
         password: data.password,
       });
 
-      console.log(data)
-      console.log(result)
+
 
       if (result?.error) {
         toast({
@@ -99,7 +98,7 @@ const SignUpPage = () => {
                     <Input
                       placeholder="Enter Username"
                       {...field}
-                      className="border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                      className="border-blue-300 focus:ring-blue-500 text-gray-800 focus:border-blue-500"
                     />
                   </FormControl>
                   <FormMessage />
@@ -114,7 +113,7 @@ const SignUpPage = () => {
                 <FormItem>
                   <FormLabel className="text-gray-700">Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter Password" {...field} className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
+                    <Input type="password" placeholder="Enter Password" {...field} className="border-blue-300 focus:ring-blue-500 focus:border-blue-500 text-gray-800" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -146,4 +145,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default SignInPage;

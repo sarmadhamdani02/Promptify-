@@ -1,6 +1,6 @@
 import React from "react";
 import PromptifyLogo from "@/components/PromptifyLogo"; // Adjust the import path as needed
-import { LogIn, UserPlus2, Zap, Sparkles, LayoutDashboard } from "lucide-react";
+import { LogIn, UserPlus2, Zap, Sparkles, LayoutDashboard, ArrowRight } from "lucide-react";
 
 const App = () => {
   return (
@@ -40,18 +40,11 @@ const App = () => {
         </p>
         <div className="flex justify-center space-x-4">
           <a
-            href="/sign-up"
+            href="/tryPromptify"
             className="flex items-center bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition duration-300"
           >
-            <UserPlus2 className="mr-2 h-5 w-5" />
-            Get Started
-          </a>
-          <a
-            href="/sign-in"
-            className="flex items-center bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-100 transition duration-300"
-          >
-            <LogIn className="mr-2 h-5 w-5" />
-            Log In
+            Try Right Now 
+            <ArrowRight  className="ml-2 h-5 w-5" />
           </a>
         </div>
       </section>

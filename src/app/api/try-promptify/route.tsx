@@ -1,27 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import { getServerSession } from "next-auth";
-import { authOption } from "../auth/[...nextauth]/options";
-import promptModel from "@/models/Prompts.model";
-import dbConnect from "@/lib/dbConnect"; // ✅ Ensure DB is connected
+
 
 const DEEPSEEK_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect(); // ✅ Connect to MongoDB
     const { userInput, tone, length, specific } = await request.json();
 
-    const session = await getServerSession(authOption);
-    const user = session?.user;
 
-    // if (!user) {
-    //   console.log("User is not verified");
-    //   return NextResponse.json(
-    //     { success: false, message: "User is not verified" },
-    //     { status: 403 }
-    //   );
-    // }
 
     const prompt = `You are an expert prompt engineer for GPTs. Your task is to generate a high-quality, enhanced prompt based on the user's input. Follow these instructions carefully:
 
@@ -71,29 +58,6 @@ Now, generate the enhanced prompt based on the user's input. Remember, output ON
         { status: 500 }
       );
     }
-
-    // ✅ Save prompt to MongoDB
-    // try {
-    //   const newPrompt = new promptModel({
-    //     userId: user._id,
-    //     inputText: userInput,
-    //     responseText: enhancedPrompt,
-    //     createdAt: new Date(),
-    //     updatedAt: new Date(),
-    //   });
-
-    //   await newPrompt.save();
-    // } catch (error) {
-    //   console.error("Error saving prompt to database:", error);
-    //   return NextResponse.json(
-    //     {
-    //       success: false,
-    //       message: "Failed to save prompt to database",
-    //       error: error.message,
-    //     },
-    //     { status: 500 }
-    //   );
-    // }
 
     return NextResponse.json({ success: true, enhancedPrompt });
   } catch (error) {
