@@ -9,11 +9,16 @@ export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { id, name, username, email, password } = await request.json();
+    
+    
+    const { name, username, email, password } = await request.json();
+    console.log( name, username, email)
     const existingUserVerifiedByUserName = await userModel.findOne({
       username,
       isVerified: true,
     });
+
+    console.log("🔹 Received Data:", { name, username, email, password });
 
     if (existingUserVerifiedByUserName) {
       return Response.json(
@@ -53,7 +58,6 @@ export async function POST(request: Request) {
       expiryDate.setHours(expiryDate.getHours() + OTP_EXPIRY_HOURS);
 
       const newUser = new userModel({
-        id: id,
         name: name,
         username: username,
         email,
@@ -74,13 +78,14 @@ export async function POST(request: Request) {
     const emailResponse = await sendVerificationEmail(email, username, otp);
 
     if (!emailResponse.success) {
+      console.error("Email sending failed:", emailResponse.message);
       return Response.json(
         {
           success: false,
-          message: emailResponse.message,
+          message: "Failed to send verification email. Please try again.",
         },
         {
-          status: 500,
+          status: 400, // ✅ CORRECT STATUS CODE
         }
       );
     }
@@ -94,16 +99,20 @@ export async function POST(request: Request) {
         status: 201,
       }
     );
-  } catch (error) {
-    console.error("sign-up>route.ts", " :: POST() :: Error ❌ : ", error);
+  } 
+  catch (error) {
+    console.error("🔥 Sign-Up API Error:", error);
+  
     return Response.json(
       {
         success: false,
-        message: "Error registering user",
+        message: error.message || "Something went wrong during sign-up.",
+        error: error, // Log the full error for debugging
       },
       {
         status: 500,
       }
     );
   }
+  
 }

@@ -8,6 +8,9 @@ export async function sendVerificationEmail(
   otp: string
 ): Promise<ApiResponse> {
   try {
+    console.log("📤 Attempting to send email...");
+    console.log(`📧 To: ${email}, OTP: ${otp}`);
+    console.log("🔑 API Key:", process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: "onboarding@resend.dev",
       to: email,

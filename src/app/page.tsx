@@ -97,7 +97,7 @@ const App = () => {
       {/* Footer */}
       <footer className="bg-blue-900/80 backdrop-blur-md py-10 text-white">
         <div className="container mx-auto px-6 text-center">
-          <p>&copy; 2023 Promptify. All rights reserved.</p>
+          <p>&copy; 2025 Promptify. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -9,11 +9,8 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema } from "@/schemas/signUpSchema";
 import PromptifyLogo from "@/components/PromptifyLogo";
-
 import { SparklesText } from "@/components/sparkles-text";
-
 import { LoaderPinwheel } from 'lucide-react';
-
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -24,7 +21,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from 'react';
 import { ApiResponse } from "@/types/ApiResponse";
@@ -33,28 +29,23 @@ const SignUpPage = () => {
     const [username, setUsername] = useState('');
     const [usernameMessage, setUsernameMessage] = useState('');
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
-    const [isCheckingPassword, setIsCheckingPassword] = useState(false);
-
-    const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [debouncedUsername] = useDebounceValue(username, 300);
-
     const router = useRouter();
     const { toast } = useToast();
 
     const form = useForm({
         resolver: zodResolver(signupSchema),
         defaultValues: {
-            username: '',
             name: '',
+            username: '',
             email: '',
             password: '',
             confirmPassword: ''
         }
     });
 
-    const password = form.watch("password");
-    const confirmPassword = form.watch("confirmPassword");
+
 
     useEffect(() => {
         const checkUsernameUniqueness = async () => {
@@ -79,26 +70,54 @@ const SignUpPage = () => {
         checkUsernameUniqueness();
     }, [debouncedUsername]);
 
-
     const onSubmit = async (data: z.infer<typeof signupSchema>) => {
         setIsSubmitting(true);
+
+          // ✅ Ensure username is sent properly
+          const fixedData = {
+            ...data,
+            username: data.username || form.getValues("username"), // Get the latest username if missing
+        };
+
+        console.log("data: to log in" ,fixedData)
         try {
-            const response = await axios.post<ApiResponse>("/api/sign-up", data);
+            const response = await axios.post<ApiResponse>("/api/sign-up", fixedData);
             toast({
                 title: "Success",
                 description: response.data.message,
             });
-            router.replace(`/verify/${username}`);
+            router.replace(`/verify/${fixedData?.username}`);
         } catch (error) {
             console.error("Error signing up:", error);
-            const axiosError = error as AxiosError;
-            const errorMessage = axiosError.response?.data || "Error signing up";
-            toast({
-                title: "Error",
-                description: errorMessage,
+            
+            if (axios.isAxiosError(error)) {
+              const errorMessage = error.response?.data?.message || "Error signing up";
+          
+              // If the error is a 400 (Bad Request), show a toast instead of crashing
+              if (error.response?.status === 400) {
+                toast({
+                  title: "Sign-Up Failed",
+                  description: errorMessage,
+                  variant: "destructive",
+                });
+              } else {
+                // For other errors (e.g., server issues), log them properly
+                toast({
+                  title: "Something went wrong",
+                  description: "Please try again later.",
+                  variant: "destructive",
+                });
+              }
+            } else {
+              // Handle non-Axios errors
+              toast({
+                title: "Unexpected Error",
+                description: "An unknown error occurred.",
                 variant: "destructive",
-            });
-        } finally {
+              });
+            }
+          }
+           finally {
             setIsSubmitting(false);
         }
     };
@@ -109,7 +128,6 @@ const SignUpPage = () => {
 
                 {/* Logo */}
                 <PromptifyLogo />
-
 
                 <h2 className="text-center text-2xl font-semibold text-gray-800 mt-4">
                     Create an account!
@@ -128,17 +146,14 @@ const SignUpPage = () => {
                                         <Input
                                             placeholder="Enter Name"
                                             {...field}
-
-                                            className="border-blue-500 focus:ring-blue-500 focus:border-blue-500 "
+                                            className="border-blue-500 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
                                         />
                                     </FormControl>
-
                                 </FormItem>
                             )}
                         />
 
                         <FormField
-
                             control={form.control}
                             name="username"
                             render={({ field }) => (
@@ -152,7 +167,7 @@ const SignUpPage = () => {
                                                 field.onChange(e);
                                                 setUsername(e.target.value);
                                             }}
-                                            className="border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                            className="border-blue-300 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -169,7 +184,12 @@ const SignUpPage = () => {
                                 <FormItem>
                                     <FormLabel className="text-gray-700">Email</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="example@email.com" {...field} className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
+                                        <Input
+                                            type="email"
+                                            placeholder="example@email.com"
+                                            {...field}
+                                            className="border-blue-300 text-gray-800 focus:ring-blue-500 focus:border-blue-500"
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -183,42 +203,23 @@ const SignUpPage = () => {
                                 <FormItem>
                                     <FormLabel className="text-gray-700">Password</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="Enter Password" {...field} className="border-blue-300 focus:ring-blue-500 focus:border-blue-500" />
+                                        <Input
+                                            type="password"
+                                            placeholder="Enter Password"
+                                            {...field}
+                                            className="text-gray-800 border-blue-300 focus:ring-blue-500 focus:border-blue-500"
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        {/* <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={(field) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">Confirm Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="Enter Password" 
-                                            className="border-blue-300 focus:ring-blue-500 focus:border-blue-500"
-                                            {...field}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                if (password !== e.target.value) {
-                                                    setPasswordMatchMessage("Passwords do not match!");
-                                                } else {
-                                                    setPasswordMatchMessage("Passwords match!");
-                                                }
-                                            }} />
-                                    </FormControl>
-                                    {isCheckingPassword && <p className="text-sm text-blue-500 mt-1">Checking username...</p>}
-                                    <p className="text-sm text-blue-500 mt-1">{passwordMatchMessage}</p>
 
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        /> */}
-
-                        <Button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition"
+                        >
                             {isSubmitting ? (
                                 <>
                                     Signing up <LoaderPinwheel className="animate-spin ml-2 h-5 w-5" />
@@ -233,9 +234,12 @@ const SignUpPage = () => {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600">
                         Already a member?{' '}
-                        <Link href="/sign-in" className="text-blue-600 hover:text-blue-500 font-medium">
+                        <button
+                            className="text-blue-600 hover:text-blue-500 font-medium"
+                            onClick={() => router.push('/sign-in')}
+                        >
                             Log In
-                        </Link>
+                        </button>
                     </p>
                 </div>
             </div>

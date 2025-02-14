@@ -33,13 +33,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           {children}
           <Toaster />
         </AuthProvider>
+        {/* Remove any unnecessary divs or components that might introduce an extra <html> */}
       </body>
     </html>
   );
