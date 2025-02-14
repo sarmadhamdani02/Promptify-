@@ -6,9 +6,14 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const url = request.nextUrl;
 
+  
+
   console.log("Token in middleware:", token);
+  console.log("Request URL:", request.url);
 
-
+  if (!token) {
+    console.log("Token not found. Redirecting to sign-in.");
+  }
   const isAuthPage =
     url.pathname.startsWith("/sign-in") ||
     url.pathname.startsWith("/sign-up") ||
@@ -27,7 +32,7 @@ export async function middleware(request: NextRequest) {
     url.pathname.startsWith(route)
   );
 
-  if (!token && isProtectedRoute) {
+  if (!token && isProtectedRoute && request.nextUrl.pathname !== "/sign-in") {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
