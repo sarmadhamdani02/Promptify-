@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react';
 import { LucideIcon, Copy, ArrowUp, ArrowDown } from 'lucide-react';
 // import Scrollbar from 'react-scrollbars-custom';
 import { format } from "date-fns"
+import { map } from 'zod';
+import { useToast } from "@/hooks/use-toast"
+import UploadPrompt from '@/components/UploadPrompt';
+
 
 interface Prompt {
     username: string;
@@ -14,6 +18,7 @@ interface Prompt {
     downVotes: number;
 }
 
+
 const fetchPrompts = async () => {
     const response = await fetch('/api/getPromptsGallery'); // Ensure you have this API route in your Next.js API
     const data = await response.json();
@@ -21,7 +26,13 @@ const fetchPrompts = async () => {
 };
 
 export default function PromptGallery() {
-    const [prompts, setPrompts] = useState<Prompt[]>([]); // Default to an empty array
+    const { toast } = useToast()
+    const [prompts, setPrompts] = useState<Prompt[]>([]);
+    const [promptUpVotes, setpromptUpVotes] = useState([]);
+
+    const [isVoted, setisVoted] = useState(false)
+    const [isDownVoted, setisDownVoted] = useState(false)
+    const [uploadPromptComponent, setUploadPromptComponent] = useState(false)
 
 
     useEffect(() => {
@@ -32,26 +43,58 @@ export default function PromptGallery() {
         });
     }, []);
 
+    useEffect(() => {
+        prompts.map((data, index) => {
+            setpromptUpVotes([...promptUpVotes, data?.upVotes]);
+
+        })
+        console.log("PromptUpvotes[]: ", promptUpVotes)
+    }, [prompts, setPrompts]);
+
     const handleCopy = (prompt: string) => {
         navigator.clipboard.writeText(prompt);
-        alert('Prompt copied to clipboard!');
+        toast({
+            title: "Copied!",
+            description: "Prompt has been copied to your clipboard",
+        });
     };
 
     const handleUpvote = (id: string) => {
-        // Handle upvote logic
         console.log('Upvoted:', id);
+
+        setPrompts((prev) =>
+            prev.map((data) =>
+                data._id === id ? { ...data, upVotes: data.upVotes + 1 } : data
+            )
+        );
+        console.log("handleUpvote: ", prompts)
     };
 
+
     const handleDownvote = (id: string) => {
-        // Handle downvote logic
-        console.log('Downvoted:', id);
+        console.log('downVoted:', id);
+
+        setPrompts((prev) =>
+            prev.map((data) =>
+                data._id === id ? { ...data, downVotes: data.downVotes + 1 } : data
+            )
+        );
+        console.log("handleDownvote: ", prompts)
     };
+
 
     return (
         <div className="bg-blue-50 min-h-screen p-8">
             <h1 className="text-center text-3xl font-semibold text-blue-500 mb-8">Prompt Gallery</h1>
+            <div className=' flex flex-col items-center w-full gap-10  transition-all duration-500'>
+                {uploadPromptComponent && <UploadPrompt />}
+                <button onClick={() => { setUploadPromptComponent(!uploadPromptComponent) }} className={`bg-blue-500 rounded-lg transition-all duration-300 ${uploadPromptComponent ? "px-12" : "px-6"} py-3 hover:bg-blue-600`}>
+                    {uploadPromptComponent ? "Hide" : "Upload your prompt"}
+                </button>
+            </div>
             <div className="flex flex-col gap-6  p-12">
                 {prompts.map((prompt, index) => (
+
                     <div
                         key={index}
                         className="bg-white hover:shadow-lg transition rounded-[30px] overflow-hidden p-6 border border-blue-500 border[1px]"
@@ -75,7 +118,7 @@ export default function PromptGallery() {
 
                         <p className="text-xs text-gray-400 hover:underline cursor-pointer mt-4">Posted at{" "}
                             <span className=' text-gray-400 '>
-                                {format(new Date(prompt.createdAt), "dd MM yyyy")}
+                                {format(new Date(prompt?.createdAt), "dd MMM yyyy")}
                             </span>
                         </p>
 
@@ -86,7 +129,6 @@ export default function PromptGallery() {
                             <div className="flex space-x-4 justify-center items-center">
                                 <button
                                     onClick={() => {
-                                        prompt.upVotes++
                                         handleUpvote(prompt?._id)
                                     }}
                                     className="flex items-center space-x-2 text-green-500 p-2 rounded-md hover:bg-green-100"
@@ -98,7 +140,7 @@ export default function PromptGallery() {
                                 <span className={`${(prompt.upVotes - prompt.downVotes) < 0 ? "text-red-500" : "text-blue-500"}  select-none font-semibold`}>{prompt.upVotes - prompt.downVotes}</span>
 
                                 <button
-                                    onClick={() => handleDownvote(prompt.username)}
+                                    onClick={() => handleDownvote(prompt?._id)}
                                     className="flex items-center space-x-2 text-red-500 p-2 rounded-md hover:bg-red-100"
                                 >
                                     <ArrowDown className="h-5 w-5" />
