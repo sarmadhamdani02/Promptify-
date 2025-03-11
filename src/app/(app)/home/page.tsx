@@ -104,6 +104,11 @@ const HomePage = () => {
 
   const onClickCopy = () => {
     navigator.clipboard.writeText(enhancedPrompt);
+    if (!navigator.clipboard) {
+      console.error("Clipboard API not available");
+      return;
+    }
+    
     toast({
       title: "Copied!",
       description: "Enhanced Prompt has been copied to your clipboard",

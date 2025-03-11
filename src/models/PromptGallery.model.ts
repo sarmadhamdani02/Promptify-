@@ -5,8 +5,8 @@ export interface PromptGallery extends Document {
   description: string;
   title: string;
   prompt: string;
-  upVotes: number;
-  downVotes: number;
+  likes: [{ type: mongoose.Schema.Types.ObjectId; ref: "User" }];
+  dislikes: [{ type: mongoose.Schema.Types.ObjectId; ref: "User" }];
   createdAt: Date;
 }
 
@@ -28,12 +28,18 @@ const promptGallerySchema: Schema<PromptGallery> = new Schema({
     type: String,
     required: true,
   },
-  upVotes: {
-    type: Number,
-  },
-  downVotes: {
-    type: Number,
-  },
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  dislikes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   createdAt: {
     type: Date,
     required: true,
@@ -41,7 +47,7 @@ const promptGallerySchema: Schema<PromptGallery> = new Schema({
 });
 
 const PromptGalleryModel =
-  mongoose.models.promptGallery || mongoose.model<PromptGallery>("promptGallery", promptGallerySchema);
+  mongoose.models.PromptGallery || // Ensure case matches
+  mongoose.model<PromptGallery>("PromptGallery", promptGallerySchema);
 
-  export default PromptGalleryModel;
-
+export default PromptGalleryModel;

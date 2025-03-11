@@ -6,10 +6,10 @@ export interface Prompt extends Document {
   responseText: string;
   createdAt: Date;
   updatedAt: Date;
+
 }
 
 const promptSchema: Schema<Prompt> = new Schema({
-
   userId: {
     type: String,
     required: true,
@@ -32,10 +32,10 @@ const promptSchema: Schema<Prompt> = new Schema({
     type: Date,
     default: Date.now,
   },
+ 
 });
 
-
-
-const promptModel = mongoose.models.Prompt || mongoose.model<Prompt>("Prompt", promptSchema);
+const promptModel =
+  mongoose.models.Prompt || mongoose.model<Prompt>("Prompt", promptSchema);
 
 export default promptModel;

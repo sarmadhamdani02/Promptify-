@@ -7,7 +7,11 @@ import { format } from "date-fns"
 import { map } from 'zod';
 import { useToast } from "@/hooks/use-toast"
 import UploadPrompt from '@/components/UploadPrompt';
-
+import { ActionIcon, CopyButton, Tooltip } from '@mantine/core';
+import dbConnect from '@/lib/dbConnect';
+import PromptGalleryModel from '@/models/PromptGallery.model';
+import { User } from "next-auth";
+import { useSession } from 'next-auth/react';
 
 interface Prompt {
     username: string;
@@ -26,6 +30,10 @@ const fetchPrompts = async () => {
 };
 
 export default function PromptGallery() {
+
+    const { data: session } = useSession();
+    const user = session?.user;
+
     const { toast } = useToast()
     const [prompts, setPrompts] = useState<Prompt[]>([]);
     const [promptUpVotes, setpromptUpVotes] = useState([]);
@@ -59,14 +67,38 @@ export default function PromptGallery() {
         });
     };
 
-    const handleUpvote = (id: string) => {
-        console.log('Upvoted:', id);
+    const handleUpvote = async (id: string) => {
 
-        setPrompts((prev) =>
-            prev.map((data) =>
-                data._id === id ? { ...data, upVotes: data.upVotes + 1 } : data
-            )
-        );
+
+
+
+
+        try {
+            dbConnect()
+            const likedPrompt = await PromptGalleryModel.findById(id)
+            const alreadyLiked = likedPrompt.likes.include(user?._id)
+
+            if (alreadyLiked) {
+                setPrompts((prev) =>
+                    prev.map((data) =>
+                        data?._id === id ? { ...data, upVotes: data.upVotes - 1 } : data
+                    )
+                );
+                await likedPrompt.likes.findByIdAndUpdate(id, { $pull: { likes: user?._id } })
+            }
+            else {
+                setPrompts((prev) =>
+                    prev.map((data) =>
+                        data?._id === id ? { ...data, upVotes: data.upVotes + 1 } : data
+                    )
+                );
+                await likedPrompt.likes.findByIdAndUpdate(id, { $push: { likes: user?._id } })
+
+            }
+        } catch (error) {
+            console.error("page.tsx", " :: handleUpVote() :: Error ❌ : ", error);
+        }
+
         console.log("handleUpvote: ", prompts)
     };
 
@@ -129,7 +161,7 @@ export default function PromptGallery() {
                             <div className="flex space-x-4 justify-center items-center">
                                 <button
                                     onClick={() => {
-                                        handleUpvote(prompt?._id)
+                                        handleUpvote(prompt?._id,)
                                     }}
                                     className="flex items-center space-x-2 text-green-500 p-2 rounded-md hover:bg-green-100"
                                 >

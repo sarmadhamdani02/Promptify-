@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 export const promptSchema = z.object({
   userId: z.string().uuid({ message: "Invalid user ID format" }), // Reference to the user who created the prompt
   input: z
