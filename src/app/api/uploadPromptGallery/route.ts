@@ -12,8 +12,8 @@ export async function POST(request: Request) {
       description,
       title,
       prompt,
-      upVotes: 0,
-      downVotes: 0,
+      upVotes: [],
+      downVotes: [],
       createdAt: new Date(),
     });
 

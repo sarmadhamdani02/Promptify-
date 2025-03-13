@@ -8,10 +8,14 @@ import { map } from 'zod';
 import { useToast } from "@/hooks/use-toast"
 import UploadPrompt from '@/components/UploadPrompt';
 import { ActionIcon, CopyButton, Tooltip } from '@mantine/core';
-import dbConnect from '@/lib/dbConnect';
-import PromptGalleryModel from '@/models/PromptGallery.model';
+import PromptGalleryModel from '../../../models/PromptGallery.model';
 import { User } from "next-auth";
 import { useSession } from 'next-auth/react';
+import dbConnect from '@/lib/dbConnect';
+import axios from 'axios';
+
+console.log(`Prompt Gallery Model: ${PromptGalleryModel}`)
+
 
 interface Prompt {
     username: string;
@@ -68,39 +72,31 @@ export default function PromptGallery() {
     };
 
     const handleUpvote = async (id: string) => {
-
-
-
-
-
         try {
-            dbConnect()
-            const likedPrompt = await PromptGalleryModel.findById(id)
-            const alreadyLiked = likedPrompt.likes.include(user?._id)
+           
+            const response = await axios.post('/api/upVotes', {
+                
+            })
 
-            if (alreadyLiked) {
+            const data = await response.json();
+            if (data.success) {
+                console.log("✅ Upvote handled successfully");
                 setPrompts((prev) =>
-                    prev.map((data) =>
-                        data?._id === id ? { ...data, upVotes: data.upVotes - 1 } : data
+                    prev.map((p) =>
+                        p._id === id
+                            ? { ...p, upVotes: p.upVotes.includes(user?._id) ? p.upVotes.filter((u) => u !== user?._id) : [...p.upVotes, user?._id] }
+                            : p
                     )
                 );
-                await likedPrompt.likes.findByIdAndUpdate(id, { $pull: { likes: user?._id } })
-            }
-            else {
-                setPrompts((prev) =>
-                    prev.map((data) =>
-                        data?._id === id ? { ...data, upVotes: data.upVotes + 1 } : data
-                    )
-                );
-                await likedPrompt.likes.findByIdAndUpdate(id, { $push: { likes: user?._id } })
-
+            } else {
+                console.error("❌ Error upvoting:", data.error);
             }
         } catch (error) {
-            console.error("page.tsx", " :: handleUpVote() :: Error ❌ : ", error);
+            console.error("❌ Error in handleUpvote():", error);
         }
-
-        console.log("handleUpvote: ", prompts)
     };
+
+
 
 
     const handleDownvote = (id: string) => {
