@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import axios from 'axios'
+import { useSession } from 'next-auth/react';
 
 const UploadPrompt = () => {
+    const { data: session } = useSession();
+    const user = session?.user;
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [prompt, setPrompt] = useState('');
+    const username = user?.username
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Handle submit logic, like calling an API to save the prompt
-        console.log("Prompt Submitted:", { title, description, prompt });
+        console.log("Prompt Submitted:", { username, description, title, prompt });
 
 
         try {
-            const response = await axios.post('/api/upload-prompt', { title, description, prompt });
+            const response = await axios.post('/api/uploadPromptGallery', { username, description, title, prompt});
             console.log("Prompt uploaded successfully:", response.data);
             setTitle('');
             setDescription('');
@@ -24,7 +28,7 @@ const UploadPrompt = () => {
             alert("Failed to upload prompt");
         }
 
-        
+
     };
 
     return (
