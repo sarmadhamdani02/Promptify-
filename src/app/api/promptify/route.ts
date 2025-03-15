@@ -51,7 +51,7 @@ Now, generate the enhanced prompt based on the user's input. Remember, output ON
     const response = await axios.post(
       DEEPSEEK_API_URL,
       {
-        model: "qwen/qwen2.5-vl-72b-instruct:free",
+        model: "mistralai/mistral-small-24b-instruct-2501:free",
         messages: [{ role: "user", content: prompt }],
       },
       {

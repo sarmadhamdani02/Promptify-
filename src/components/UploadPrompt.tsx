@@ -17,6 +17,7 @@ const UploadPrompt = () => {
 
 
         try {
+            console.log( username, description, title, prompt)
             const response = await axios.post('/api/uploadPromptGallery', { username, description, title, prompt});
             console.log("Prompt uploaded successfully:", response.data);
             setTitle('');

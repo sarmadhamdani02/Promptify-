@@ -6,26 +6,24 @@ import bcrypt from "bcryptjs";
 const OTP_EXPIRY_HOURS = 1;
 
 export async function POST(request: Request) {
+  console.log("🔹 Step 1: Received sign-up request");
+
   await dbConnect();
+  console.log("🔹 Step 2: Connected to DB");
 
   try {
-    
-    
     const { name, username, email, password } = await request.json();
-    console.log( name, username, email)
+    console.log("🔹 Step 3: Parsed JSON:", { name, username, email });
+
     const existingUserVerifiedByUserName = await userModel.findOne({
       username,
       isVerified: true,
     });
 
-    console.log("🔹 Received Data:", { name, username, email, password });
-
     if (existingUserVerifiedByUserName) {
+      console.log("❌ Username already taken");
       return Response.json(
-        {
-          success: false,
-          message: "UserName already taken.",
-        },
+        { success: false, message: "UserName already taken." },
         { status: 400 }
       );
     }
@@ -35,31 +33,26 @@ export async function POST(request: Request) {
 
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
+        console.log("❌ User already verified!");
         return Response.json(
-          {
-            success: false,
-            message: "User already verified!",
-          },
-          {
-            status: 500,
-          }
+          { success: false, message: "User already verified!" },
+          { status: 400 }
         );
       } else {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        existingUserByEmail.password = hashedPassword;
+        console.log("🔹 Updating existing unverified user...");
+        existingUserByEmail.password = await bcrypt.hash(password, 10);
         existingUserByEmail.verifyCode = otp;
-
         await existingUserByEmail.save();
       }
     } else {
+      console.log("🔹 Creating new user...");
       const hashedPassword = await bcrypt.hash(password, 10);
-
       const expiryDate = new Date();
       expiryDate.setHours(expiryDate.getHours() + OTP_EXPIRY_HOURS);
 
       const newUser = new userModel({
-        name: name,
-        username: username,
+        name,
+        username,
         email,
         password: hashedPassword,
         verifyCode: otp,
@@ -73,46 +66,34 @@ export async function POST(request: Request) {
       await newUser.save();
     }
 
-    // send verification email
-
+    console.log("✅ Sending verification email to:", email);
     const emailResponse = await sendVerificationEmail(email, username, otp);
 
     if (!emailResponse.success) {
-      console.error("Email sending failed:", emailResponse.message);
+      console.error("❌ Email sending failed:", emailResponse.message);
       return Response.json(
-        {
-          success: false,
-          message: "Failed to send verification email. Please try again.",
-        },
-        {
-          status: 400, // ✅ CORRECT STATUS CODE
-        }
+        { success: false, message: "Failed to send verification email." },
+        { status: 400 }
       );
     }
 
+    console.log("✅ Email sent successfully!");
     return Response.json(
       {
         success: true,
-        message: "User registered successfully, veryfy your email.",
+        message: "User registered successfully. Verify your email.",
       },
-      {
-        status: 201,
-      }
+      { status: 201 }
     );
-  } 
-  catch (error) {
+  } catch (error) {
     console.error("🔥 Sign-Up API Error:", error);
-  
     return Response.json(
       {
         success: false,
-        message: error.message || "Something went wrong during sign-up.",
-        error: error, // Log the full error for debugging
+        message: "Something went wrong during sign-up.",
+        error,
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
-  
 }

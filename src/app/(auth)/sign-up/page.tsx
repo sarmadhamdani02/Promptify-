@@ -2,14 +2,12 @@
 
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import Link from "next/link";
 import { useDebounceValue } from 'usehooks-ts';
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema } from "@/schemas/signUpSchema";
 import PromptifyLogo from "@/components/PromptifyLogo";
-import { SparklesText } from "@/components/sparkles-text";
 import { LoaderPinwheel } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
