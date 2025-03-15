@@ -1,4 +1,3 @@
-
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -24,11 +23,9 @@ export const authOption: NextAuthOptions = {
 
         try {
           const user = await userModel.findOne({
-            $or: [
-              { email: credentials.identifier },
-              { id: credentials.identifier },
-            ],
+            username: credentials.username, // ✅ Now it only looks for username
           });
+          
 
           if (!user) {
             throw new Error("No such user already exists :(");
@@ -51,8 +48,9 @@ export const authOption: NextAuthOptions = {
             }
           }
         } catch (error: any) {
-          throw new Error(error.message || "An error occurred during authentication");
-
+          throw new Error(
+            error.message || "An error occurred during authentication"
+          );
         }
       },
     }),
@@ -72,9 +70,8 @@ export const authOption: NextAuthOptions = {
         session.user._id = token._id;
         session.user.username = token.username;
         session.user.isVerified = token.isVerified;
-      }
-      else{
-        throw new Error("middleware :: session :: Error :unauthorized")
+      } else {
+        throw new Error("middleware :: session :: Error :unauthorized");
       }
 
       return session;

@@ -108,7 +108,7 @@ const HomePage = () => {
       console.error("Clipboard API not available");
       return;
     }
-    
+
     toast({
       title: "Copied!",
       description: "Enhanced Prompt has been copied to your clipboard",
@@ -119,9 +119,9 @@ const HomePage = () => {
 
   return (
     <MantineProvider theme={theme}>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8 bg-blue-50">
         <Navbar />
-        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8 bg-blue-50 mt-12">
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl ">
           {/* Logo */}
           <PromptifyLogo />
 
