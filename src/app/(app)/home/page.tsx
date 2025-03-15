@@ -205,10 +205,10 @@ const HomePage = () => {
                 name="specificInput"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">Specific Input (Optional)</FormLabel>
+                    <FormLabel className="text-gray-700">Specific Context (Optional)</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter specific input"
+                        placeholder="Enter specific Context (Keywords)"
                         {...field}
                         className="border-blue-300 focus:ring-blue-500 focus:border-blue-500"
                       />

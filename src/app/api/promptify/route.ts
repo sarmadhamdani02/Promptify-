@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
    - Task: ${userInput}
    - Tone/Style: ${tone}
    - Length: ${length}
-   - Specific Focus: ${specific}
+   - Specific context: ${specific}
 
 2. **Your Task:**
    - Generate a fully formed, clear, and optimized prompt that an AI can use to generate the desired content.
