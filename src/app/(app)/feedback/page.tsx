@@ -67,7 +67,7 @@ export default function FeedbackPage() {
             setCanSubmit(false);
             setTimeLeft(10 * 60); // Set 10-minute cooldown in seconds
             localStorage.setItem("lastFeedbackTime", Date.now().toString());
-        } catch () {
+        } catch (error) {
             toast({
                 title: "Submission Failed ❌",
                 description: "Something went wrong. Please try again.",

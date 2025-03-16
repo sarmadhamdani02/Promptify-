@@ -85,7 +85,7 @@ export default function PromptGallery() {
                         : p
                 )
             );
-        } catch () {
+        } catch (error) {
             toast({ title: "Vote Failed", description: "Something went wrong. Try again.", variant: "destructive" });
         }
     };

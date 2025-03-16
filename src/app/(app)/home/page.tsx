@@ -84,7 +84,7 @@ const HomePage = () => {
 
         setEnhancedPrompt(response.data.enhancedPrompt);
         setIsDrawerOpen(true);
-      } catch () {
+      } catch (error) {
         toast({
           title: "Some Error Occured",
           description: "Promptify couldn't promptified the prompt, Please Promptify Again.",
