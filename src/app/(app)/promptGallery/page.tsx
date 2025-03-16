@@ -86,6 +86,8 @@ export default function PromptGallery() {
                 )
             );
         } catch (error) {
+            console.error("An error occurred:", error); 
+
             toast({ title: "Vote Failed", description: "Something went wrong. Try again.", variant: "destructive" });
         }
     };
