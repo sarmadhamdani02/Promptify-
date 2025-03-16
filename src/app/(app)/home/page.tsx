@@ -255,7 +255,7 @@ const HomePage = () => {
                 <Button
                   variant="default"
                   className="ml-4 w-full border border-blue-200 hover:text-white hover:bg-blue-700 bg-blue-500"
-                  disabled="true"
+                  disabled=true
                 >
                   <Save />
                   Save
