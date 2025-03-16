@@ -44,15 +44,7 @@ const formSchema = z.object({
   specificInput: z.string().optional(),
 });
 
-const form = useForm({
-  resolver: zodResolver(formSchema),
-  defaultValues: {
-    prompt: "",   // ✅ Change this to "prompt" to match formSchema
-    tone: "",
-    length: "",
-    specificInput: "",
-  },
-});
+
 
 const HomePage = () => {
   const { toast } = useToast();
@@ -64,10 +56,19 @@ const HomePage = () => {
     /** Put your mantine theme override here */
   });
 
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      prompt: "",   // ✅ Change this to "prompt" to match formSchema
+      tone: "",
+      length: "",
+      specificInput: "",
+    },
+  });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsGeneratingPrompt(true);
-
+  
     if (!data.prompt) {
       toast({
         title: "Error",
@@ -76,7 +77,7 @@ const HomePage = () => {
       setIsGeneratingPrompt(false);
       return;
     }
-
+  
     try {
       const response = await axios.post("/api/promptify", {
         prompt: data.prompt,  // ✅ Use "prompt" instead of "userInput"
@@ -84,7 +85,7 @@ const HomePage = () => {
         length: data.length,
         specific: data.specificInput
       });
-
+  
       setEnhancedPrompt(response.data.enhancedPrompt);
       setIsDrawerOpen(true);
     } catch (error) {
@@ -98,7 +99,7 @@ const HomePage = () => {
       setIsGeneratingPrompt(false);
     }
   };
-
+  
 
   const onClickCopy = () => {
     navigator.clipboard.writeText(enhancedPrompt);
