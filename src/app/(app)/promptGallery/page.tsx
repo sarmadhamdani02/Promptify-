@@ -64,7 +64,6 @@ export default function PromptGallery() {
                 userId: user._id,
             });
 
-            // ✅ Fix: Ensure upVotes & downVotes are always `string[]` (filter out `undefined`)
             setPrompts((prev) =>
                 prev.map((p) =>
                     p._id === promptId
@@ -72,19 +71,20 @@ export default function PromptGallery() {
                             ...p,
                             upVotes: type === "up"
                                 ? p.upVotes.includes(user._id)
-                                    ? p.upVotes.filter((id): id is string => id !== user._id) // ✅ Ensure string[]
-                                    : [...p.upVotes.filter((id): id is string => !!id), user._id] // ✅ Ensure string[]
-                                : p.upVotes.filter((id): id is string => id !== user._id), // ✅ Ensure string[]
-
+                                    ? p.upVotes.filter((id) => id !== user._id) // ✅ Ensure string[]
+                                    : [...p.upVotes.filter(Boolean), user._id] // ✅ `Boolean` filters out `undefined`
+                                : p.upVotes.filter((id) => id !== user._id), // ✅ Ensure string[]
+            
                             downVotes: type === "down"
                                 ? p.downVotes.includes(user._id)
-                                    ? p.downVotes.filter((id): id is string => id !== user._id) // ✅ Ensure string[]
-                                    : [...p.downVotes.filter((id): id is string => !!id), user._id] // ✅ Ensure string[]
-                                : p.downVotes.filter((id): id is string => id !== user._id), // ✅ Ensure string[]
+                                    ? p.downVotes.filter((id) => id !== user._id) // ✅ Ensure string[]
+                                    : [...p.downVotes.filter(Boolean), user._id] // ✅ `Boolean` filters out `undefined`
+                                : p.downVotes.filter((id) => id !== user._id), // ✅ Ensure string[]
                         }
                         : p
                 )
             );
+            
 
         } catch (error) {
             console.error("An error occurred:", error);
