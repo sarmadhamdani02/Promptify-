@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea"
 import Navbar from "@/components/Navbar";
 import { Zap } from "lucide-react";
-import { createTheme, MantineProvider } from '@mantine/core';
 
 import { Copy, Save } from "lucide-react"
 
@@ -51,10 +50,6 @@ const HomePage = () => {
   const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [enhancedPrompt, setEnhancedPrompt] = useState("");
-
-  const theme = createTheme({
-    /** Put your mantine theme override here */
-  });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -255,7 +250,7 @@ const HomePage = () => {
                 <Button
                   variant="default"
                   className="ml-4 w-full border border-blue-200 hover:text-white hover:bg-blue-700 bg-blue-500"
-                  disabled=true
+                  disabled={true}
                 >
                   <Save />
                   Save
