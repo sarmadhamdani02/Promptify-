@@ -40,8 +40,18 @@ import { useState } from "react";
 const formSchema = z.object({
   tone: z.string().optional(),
   length: z.string().optional(),
-  prompt: z.string().min(1, "Prompt is required"),
+  prompt: z.string().min(1, "Prompt is required"),  // ✅ Make sure this key is "prompt"
   specificInput: z.string().optional(),
+});
+
+const form = useForm({
+  resolver: zodResolver(formSchema),
+  defaultValues: {
+    prompt: "",   // ✅ Change this to "prompt" to match formSchema
+    tone: "",
+    length: "",
+    specificInput: "",
+  },
 });
 
 const HomePage = () => {
@@ -66,37 +76,38 @@ const HomePage = () => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsGeneratingPrompt(true);
-
-    if (!data) {
+  
+    if (!data.prompt) {
       toast({
         title: "Error",
         description: "Please fill out all required fields",
       });
       setIsGeneratingPrompt(false);
-    } else {
-      try {
-        const response = await axios.post("/api/promptify", {
-          userInput: data.prompt?.toString(),
-          tone: data.tone?.toString(),
-          length: data.length?.toString(),
-          specific: data.specificInput?.toString()
-        });
-
-        setEnhancedPrompt(response.data.enhancedPrompt);
-        setIsDrawerOpen(true);
-      } catch (error) {
-        console.error("An error occurred:", error);
-
-        toast({
-          title: "Some Error Occured",
-          description: "Promptify couldn't promptified the prompt, Please Promptify Again.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsGeneratingPrompt(false);
-      }
+      return;
+    }
+  
+    try {
+      const response = await axios.post("/api/promptify", {
+        prompt: data.prompt,  // ✅ Use "prompt" instead of "userInput"
+        tone: data.tone,
+        length: data.length,
+        specific: data.specificInput
+      });
+  
+      setEnhancedPrompt(response.data.enhancedPrompt);
+      setIsDrawerOpen(true);
+    } catch (error) {
+      console.error("An error occurred:", error);
+      toast({
+        title: "Some Error Occurred",
+        description: "Promptify couldn't generate the prompt. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingPrompt(false);
     }
   };
+  
 
   const onClickCopy = () => {
     navigator.clipboard.writeText(enhancedPrompt);
