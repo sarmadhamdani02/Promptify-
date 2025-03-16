@@ -64,7 +64,7 @@ export default function PromptGallery() {
                 userId: user._id,
             });
 
-            // ✅ Fix: Ensure downvote removes upvote & vice versa
+            // ✅ Fix: Ensure upVotes & downVotes are always `string[]` (filter out `undefined`)
             setPrompts((prev) =>
                 prev.map((p) =>
                     p._id === promptId
@@ -72,21 +72,22 @@ export default function PromptGallery() {
                             ...p,
                             upVotes: type === "up"
                                 ? p.upVotes.includes(user._id)
-                                    ? p.upVotes.filter((id) => id !== user._id)
-                                    : [...p.upVotes, user._id]
-                                : p.upVotes.filter((id) => id !== user._id), // Remove upvote on downvote
+                                    ? p.upVotes.filter((id): id is string => id !== user._id) // ✅ Ensure string[]
+                                    : [...p.upVotes.filter((id): id is string => !!id), user._id] // ✅ Ensure string[]
+                                : p.upVotes.filter((id): id is string => id !== user._id), // ✅ Ensure string[]
 
                             downVotes: type === "down"
                                 ? p.downVotes.includes(user._id)
-                                    ? p.downVotes.filter((id) => id !== user._id)
-                                    : [...p.downVotes, user._id]
-                                : p.downVotes.filter((id) => id !== user._id), // Remove downvote on upvote
+                                    ? p.downVotes.filter((id): id is string => id !== user._id) // ✅ Ensure string[]
+                                    : [...p.downVotes.filter((id): id is string => !!id), user._id] // ✅ Ensure string[]
+                                : p.downVotes.filter((id): id is string => id !== user._id), // ✅ Ensure string[]
                         }
                         : p
                 )
             );
+
         } catch (error) {
-            console.error("An error occurred:", error); 
+            console.error("An error occurred:", error);
 
             toast({ title: "Vote Failed", description: "Something went wrong. Try again.", variant: "destructive" });
         }
@@ -146,10 +147,10 @@ export default function PromptGallery() {
                                             {/* ✅ Vote Count Coloring Logic */}
                                             <span
                                                 className={`text-lg font-semibold ${voteDifference === 0
-                                                        ? "text-blue-500"
-                                                        : voteDifference > 0
-                                                            ? "text-green-500"
-                                                            : "text-red-500"
+                                                    ? "text-blue-500"
+                                                    : voteDifference > 0
+                                                        ? "text-green-500"
+                                                        : "text-red-500"
                                                     }`}
                                             >
                                                 {voteDifference}
