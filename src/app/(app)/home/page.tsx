@@ -85,6 +85,8 @@ const HomePage = () => {
         setEnhancedPrompt(response.data.enhancedPrompt);
         setIsDrawerOpen(true);
       } catch (error) {
+        console.error("An error occurred:", error);
+
         toast({
           title: "Some Error Occured",
           description: "Promptify couldn't promptified the prompt, Please Promptify Again.",
@@ -113,7 +115,7 @@ const HomePage = () => {
 
   return (
     <MantineProvider theme={theme}>
-        <Navbar />
+      <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8 bg-blue-50 mt-12">
         <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl ">
           {/* Logo */}

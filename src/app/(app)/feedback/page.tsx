@@ -68,6 +68,8 @@ export default function FeedbackPage() {
             setTimeLeft(10 * 60); // Set 10-minute cooldown in seconds
             localStorage.setItem("lastFeedbackTime", Date.now().toString());
         } catch (error) {
+            console.error("An error occurred:", error);
+
             toast({
                 title: "Submission Failed ❌",
                 description: "Something went wrong. Please try again.",
@@ -126,9 +128,8 @@ export default function FeedbackPage() {
                     <button
                         type="submit"
                         disabled={loading || !canSubmit}
-                        className={`w-full py-2 px-4 text-white font-semibold rounded-md transition-all focus:ring-2 focus:ring-blue-500 ${
-                            canSubmit ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-400 cursor-not-allowed"
-                        }`}
+                        className={`w-full py-2 px-4 text-white font-semibold rounded-md transition-all focus:ring-2 focus:ring-blue-500 ${canSubmit ? "bg-blue-500 hover:bg-blue-600" : "bg-gray-400 cursor-not-allowed"
+                            }`}
                     >
                         {loading ? <Loader className="animate-spin mx-auto" /> : "Send Feedback"}
                     </button>
