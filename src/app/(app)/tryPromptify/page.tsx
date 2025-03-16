@@ -54,19 +54,25 @@ const HomePage = () => {
     });
 
     const [userTrialCount, setUserTrialCount] = useState<number | null>(null);
-
+    const [isClient, setIsClient] = useState(false);
+    
+    // ✅ Ensure this only runs in the browser
     useEffect(() => {
+        setIsClient(true);
         if (typeof window !== "undefined") {
             const storedValue = localStorage.getItem("userTrialCount");
             setUserTrialCount(storedValue ? JSON.parse(storedValue) : 0);
         }
     }, []);
-
+    
     useEffect(() => {
-        if (typeof window !== "undefined" && userTrialCount !== null) {
+        if (isClient && userTrialCount !== null) {
             localStorage.setItem("userTrialCount", JSON.stringify(userTrialCount));
         }
-    }, [userTrialCount]);
+    }, [isClient, userTrialCount]);
+    
+    if (!isClient) return null; // ✅ Prevent rendering on the server
+    
 
 
     const form = useForm({
