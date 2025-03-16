@@ -9,18 +9,7 @@ import axios from "axios";
 import PromptGalleryLogo from "@/components/PromptGalleryLogo";
 import Navbar from "@/components/Navbar";
 
-interface Prompt {
-    _id: string;
-    username: string;
-    description: string;
-    title: string;
-    prompt: string;
-    upVotes: string[];
-    downVotes: string[];
-    createdAt: string;
-}
-
-const fetchPrompts = async (): Promise<Prompt[]> => {
+const fetchPrompts = async () => {
     const response = await fetch("/api/getPromptsGallery");
     const data = await response.json();
     return data.message;
@@ -30,7 +19,7 @@ export default function PromptGallery() {
     const { data: session } = useSession();
     const user = session?.user;
     const { toast } = useToast();
-    const [prompts, setPrompts] = useState<Prompt[]>([]);
+    const [prompts, setPrompts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     console.log("🔍 User session data:", user);
@@ -43,7 +32,7 @@ export default function PromptGallery() {
         });
     }, []);
 
-    const handleCopy = (prompt: string) => {
+    const handleCopy = (prompt) => {
         navigator.clipboard.writeText(prompt);
         toast({
             title: "Copied!",
@@ -51,8 +40,7 @@ export default function PromptGallery() {
         });
     };
 
-    // ✅ Handle Upvote & Downvote
-    const handleVote = async (promptId: string, type: "up" | "down") => {
+    const handleVote = async (promptId, type) => {
         if (!user?._id) {
             toast({ title: "Login Required", description: "You must be logged in to vote.", variant: "destructive" });
             return;
@@ -68,31 +56,29 @@ export default function PromptGallery() {
                 prev.map((p) =>
                     p._id === promptId
                         ? {
-                            ...p,
-                            upVotes: type === "up"
-                                ? p.upVotes.includes(user._id)
-                                    ? p.upVotes.filter((id) => id !== user._id) // ✅ Ensure string[]
-                                    : [...p.upVotes.filter(Boolean), user._id] // ✅ `Boolean` filters out `undefined`
-                                : p.upVotes.filter((id) => id !== user._id), // ✅ Ensure string[]
-            
-                            downVotes: type === "down"
-                                ? p.downVotes.includes(user._id)
-                                    ? p.downVotes.filter((id) => id !== user._id) // ✅ Ensure string[]
-                                    : [...p.downVotes.filter(Boolean), user._id] // ✅ `Boolean` filters out `undefined`
-                                : p.downVotes.filter((id) => id !== user._id), // ✅ Ensure string[]
-                        }
+                              ...p,
+                              upVotes:
+                                  type === "up"
+                                      ? p.upVotes.includes(user._id)
+                                          ? p.upVotes.filter((id) => id && id !== user._id)
+                                          : [...p.upVotes.filter((id) => id), user._id]
+                                      : p.upVotes.filter((id) => id && id !== user._id),
+
+                              downVotes:
+                                  type === "down"
+                                      ? p.downVotes.includes(user._id)
+                                          ? p.downVotes.filter((id) => id && id !== user._id)
+                                          : [...p.downVotes.filter((id) => id), user._id]
+                                      : p.downVotes.filter((id) => id && id !== user._id),
+                          }
                         : p
                 )
             );
-            
-
         } catch (error) {
             console.error("An error occurred:", error);
-
             toast({ title: "Vote Failed", description: "Something went wrong. Try again.", variant: "destructive" });
         }
     };
-
 
     return (
         <div>
@@ -101,7 +87,7 @@ export default function PromptGallery() {
                 <div className="flex flex-col items-center w-full gap-6 transition-all duration-500 mt-20">
                     <PromptGalleryLogo className="scale-110" />
                     <button
-                        onClick={() => setUploadPromptComponent(true)}
+                        onClick={() => alert("Upload prompt modal here!")}
                         className="bg-blue-500 text-lg font-semibold rounded-lg transition-all duration-300 px-8 py-3 hover:bg-blue-600 text-white shadow-md"
                     >
                         + Upload Your Prompt
@@ -146,12 +132,13 @@ export default function PromptGallery() {
 
                                             {/* ✅ Vote Count Coloring Logic */}
                                             <span
-                                                className={`text-lg font-semibold ${voteDifference === 0
-                                                    ? "text-blue-500"
-                                                    : voteDifference > 0
+                                                className={`text-lg font-semibold ${
+                                                    voteDifference === 0
+                                                        ? "text-blue-500"
+                                                        : voteDifference > 0
                                                         ? "text-green-500"
                                                         : "text-red-500"
-                                                    }`}
+                                                }`}
                                             >
                                                 {voteDifference}
                                             </span>

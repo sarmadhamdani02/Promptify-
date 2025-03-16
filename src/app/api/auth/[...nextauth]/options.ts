@@ -18,43 +18,39 @@ export const authOption: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: {
-        username: string;
-        password: string;
-      }): Promise<userModel | null> {
-        dbConnect();
-
-        try {
-          const user = await userModel.findOne({
-            username: credentials.username, // ✅ Now it only looks for username
-          });
-
-          if (!user) {
-            throw new Error("No such user already exists :(");
-          } else {
-            if (!user.isVerified) {
-              throw new Error("Please verify your account before you login...");
-            } else {
-              //means user exists and lets check the password
-              const isPasswordCorrect = await bcrypt.compare(
-                credentials.password,
-                user.password
-              );
-
-              if (isPasswordCorrect) {
-                //checking password
-                return user;
-              } else {
-                throw new Error("Wrong password mate!");
-              }
-            }
-          }
-        } catch (error: unknown) {
-          throw new Error(
-            error.message || "An error occurred during authentication"
-          );
+      async authorize(credentials: Record<"email" | "password", string> | undefined) {
+        if (!credentials) {
+          throw new Error("Credentials are required");
         }
-      },
+      
+        await dbConnect();
+      
+        try {
+          const user = await userModel.findOne({ email: credentials.email }).lean(); // Convert to plain object
+      
+          if (!user) {
+            throw new Error("No such user exists :(");
+          }
+      
+          if (!user.isVerified) {
+            throw new Error("Please verify your account before logging in...");
+          }
+      
+          const isPasswordCorrect = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+      
+          if (!isPasswordCorrect) {
+            throw new Error("Wrong password mate!");
+          }
+      
+          return user; // Since it's now a plain object, NextAuth won't complain
+        } catch (error: any) {
+          throw new Error(error.message || "An error occurred during authentication");
+        }
+      }
+      
     }),
   ],
 

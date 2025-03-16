@@ -55,7 +55,7 @@ const SignUpPage = () => {
                     console.log(response.data.message); // Debugging log
                 } catch (error) {
                     // Properly extract error message
-                    const axiosError = error as AxiosError;
+                    const axiosError = error as AxiosError<{ message?: string }>;
                     const errorMessage = axiosError.response?.data?.message || "Error checking username";
 
                     setUsernameMessage(errorMessage);

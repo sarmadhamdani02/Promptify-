@@ -68,42 +68,43 @@ const HomePage = () => {
         }
     });
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data: { prompt: string; tone?: string; length?: string; specificInput?: string }) => {
         setIsGeneratingPrompt(true);
-
+    
         try {
             // Check if the user has already used their trial
             if (userTrailCount >= 1) {
                 setTrialDrawerOpen(true); // Show sign-up/login drawer
                 return;
             }
-
+    
             const response = await axios.post("/api/try-promptify", {
                 userInput: data.prompt,
                 tone: data.tone,
                 length: data.length,
                 specific: data.specificInput
             });
-
+    
             if (response.status !== 200) {
                 throw new Error("API returned an error");
             }
-
+    
             setEnhancedPrompt(response.data.enhancedPrompt);
             setIsDrawerOpen(true); // Show enhanced prompt drawer
-            setUserTrailCount((prev) => prev + 1); // Increment trial count
-
+            setUserTrailCount((prev:number) => prev + 1); // Increment trial count
+    
         } catch (error) {
             console.error("API Error:", error);
             toast({
                 title: "Some Error Occurred",
-                description: error.message || "Promptify couldn't promptify the prompt. Please try again.",
+                description: error instanceof Error ? error.message : String(error) || "Promptify couldn't promptify the prompt. Please try again.",
                 variant: "destructive"
             });
         } finally {
             setIsGeneratingPrompt(false);
         }
     };
+    
 
     const onClickCopy = () => {
         navigator.clipboard.writeText(enhancedPrompt);
