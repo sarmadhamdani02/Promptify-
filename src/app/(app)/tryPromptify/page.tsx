@@ -53,10 +53,21 @@ const HomePage = () => {
         return storedValue ? JSON.parse(storedValue) : 0; // Track number of submissions
     });
 
-    // Update localStorage whenever userTrailCount changes
+    const [userTrialCount, setUserTrialCount] = useState<number | null>(null);
+
     useEffect(() => {
-        localStorage.setItem("userTrailCount", JSON.stringify(userTrailCount));
-    }, [userTrailCount]);
+        if (typeof window !== "undefined") {
+            const storedValue = localStorage.getItem("userTrialCount");
+            setUserTrialCount(storedValue ? JSON.parse(storedValue) : 0);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && userTrialCount !== null) {
+            localStorage.setItem("userTrialCount", JSON.stringify(userTrialCount));
+        }
+    }, [userTrialCount]);
+
 
     const form = useForm({
         resolver: zodResolver(formSchema),
