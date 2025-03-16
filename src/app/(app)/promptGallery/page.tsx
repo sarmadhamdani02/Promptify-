@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import PromptGalleryLogo from "@/components/PromptGalleryLogo";
 import Navbar from "@/components/Navbar";
-import { Modal } from "@mantine/core";
 
 interface Prompt {
     _id: string;
@@ -32,7 +31,6 @@ export default function PromptGallery() {
     const user = session?.user;
     const { toast } = useToast();
     const [prompts, setPrompts] = useState<Prompt[]>([]);
-    const [uploadPromptComponent, setUploadPromptComponent] = useState(false);
     const [loading, setLoading] = useState(true);
 
     console.log("🔍 User session data:", user);
@@ -87,7 +85,7 @@ export default function PromptGallery() {
                         : p
                 )
             );
-        } catch (error) {
+        } catch () {
             toast({ title: "Vote Failed", description: "Something went wrong. Try again.", variant: "destructive" });
         }
     };

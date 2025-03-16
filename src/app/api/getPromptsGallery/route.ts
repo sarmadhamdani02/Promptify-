@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import PromptGalleryModel from "@/models/PromptGallery.model";
 
-export async function GET(request: Request, response: Response) {
+export async function GET() {
   await dbConnect();
 
   try {

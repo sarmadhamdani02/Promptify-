@@ -67,7 +67,7 @@ export default function FeedbackPage() {
             setCanSubmit(false);
             setTimeLeft(10 * 60); // Set 10-minute cooldown in seconds
             localStorage.setItem("lastFeedbackTime", Date.now().toString());
-        } catch (error) {
+        } catch () {
             toast({
                 title: "Submission Failed ❌",
                 description: "Something went wrong. Please try again.",
@@ -83,7 +83,7 @@ export default function FeedbackPage() {
             <Navbar />
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
                 <h2 className="text-2xl font-bold text-gray-800 text-center">Feedback Form</h2>
-                <p className="text-gray-600 text-center mt-2">We'd love to hear from you!</p>
+                <p className="text-gray-600 text-center mt-2">We&apos;d love to hear from you!</p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                     {/* Name (Auto-filled & Locked) */}

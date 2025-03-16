@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PromptifyLogo from "@/components/PromptifyLogo";
-import { LogIn, LogOut, UserPlus2, FilePlus, GalleryHorizontalEnd, MessageSquare, Home } from "lucide-react";
+import { LogIn, LogOut, UserPlus2, FilePlus, GalleryHorizontalEnd, MessageSquare } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Menu as MantineMenu, Burger } from "@mantine/core";
@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 
 const Navbar = () => {
     const { data: session } = useSession();
-    const user = session?.user;
     const [menuOpened, setMenuOpened] = useState(false);
     const pathname = usePathname(); // ✅ Get current route
 

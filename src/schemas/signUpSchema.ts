@@ -25,13 +25,13 @@ export const signupSchema = z.object({
 export type SignupInput = z.infer<typeof signupSchema>; // Extracts TypeScript type
 
 // To validate:
-const validateSignup = (data: unknown) => {
-  const result = signupSchema.safeParse(data); // Validates and provides result
-  if (!result.success) {
-    throw new Error(result.error.errors.map((err) => err.message).join(", "));
-  }
-  return result.data; // Returns valid data
-};
+// const validateSignup = (data: unknown) => {
+//   const result = signupSchema.safeParse(data); // Validates and provides result
+//   if (!result.success) {
+//     throw new Error(result.error.errors.map((err) => err.message).join(", "));
+//   }
+//   return result.data; // Returns valid data
+// };
 
 export const usernameValidate = z
   .string()

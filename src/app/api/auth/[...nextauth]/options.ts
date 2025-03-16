@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
@@ -18,14 +18,16 @@ export const authOption: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials: {
+        username: string;
+        password: string;
+      }): Promise<userModel | null> {
         dbConnect();
 
         try {
           const user = await userModel.findOne({
             username: credentials.username, // ✅ Now it only looks for username
           });
-          
 
           if (!user) {
             throw new Error("No such user already exists :(");
@@ -47,7 +49,7 @@ export const authOption: NextAuthOptions = {
               }
             }
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           throw new Error(
             error.message || "An error occurred during authentication"
           );

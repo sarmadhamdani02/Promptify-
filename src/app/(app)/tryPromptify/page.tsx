@@ -6,13 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea"
-import { useSession, signOut } from "next-auth/react";
 import Navbar from "@/components/Navbar";
 import { Zap } from "lucide-react";
 import { createTheme, MantineProvider } from '@mantine/core';
-import { Badge } from '@mantine/core';
 import { LogIn, UserPlus } from "lucide-react"
-import { User } from "next-auth";
 import { Copy, Save } from "lucide-react"
 import {
     Drawer,
@@ -22,7 +19,6 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
-    DrawerTrigger,
 } from "@/components/ui/drawer"
 import {
     Form,

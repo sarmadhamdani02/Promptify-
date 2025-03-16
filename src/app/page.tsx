@@ -36,7 +36,7 @@ const App = () => {
           Transform Your Prompts into <br /> Powerful AI Inputs
         </h1>
         <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-          Promptify enhances your input to generate better results with AI. Whether you're crafting prompts for ChatGPT, MidJourney, or any AI model, we help make your inputs <b>smarter, clearer, and more effective </b>.
+          Promptify enhances your input to generate better results with AI. Whether you&apos;re crafting prompts for ChatGPT, MidJourney, or any AI model, we help make your inputs <b>smarter, clearer, and more effective </b>.
         </p>
         <div className="flex justify-center space-x-4">
           <a

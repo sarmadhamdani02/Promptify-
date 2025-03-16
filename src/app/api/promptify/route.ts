@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOption } from "../auth/[...nextauth]/options";
 import promptModel from "@/models/Prompts.model";
 import dbConnect from "@/lib/dbConnect";
-import { compressToBase64, decompressFromBase64 } from 'lz-string';
+import { compressToBase64 } from "lz-string";
 
 const DEEPSEEK_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
@@ -79,7 +79,7 @@ Now, generate the enhanced prompt based on the user's input. Remember, output ON
       newPrompt = new promptModel({
         userId: user._id,
         inputText: userInput,
-        responseText:  compressToBase64(enhancedPrompt),
+        responseText: compressToBase64(enhancedPrompt),
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -100,7 +100,10 @@ Now, generate the enhanced prompt based on the user's input. Remember, output ON
 
     return NextResponse.json({ success: true, enhancedPrompt });
   } catch (error) {
-    console.error("Error enhancing prompt:", error.response?.data || error.message);
+    console.error(
+      "Error enhancing prompt:",
+      error.response?.data || error.message
+    );
     return NextResponse.json(
       {
         success: false,

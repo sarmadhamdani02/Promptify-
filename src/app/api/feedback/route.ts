@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         });
 
         return Response.json({ success: true, message: "Feedback sent successfully!" });
-    } catch (error) {
+    } catch () {
         return Response.json({ success: false, message: "Failed to send feedback." }, { status: 500 });
     }
 }
