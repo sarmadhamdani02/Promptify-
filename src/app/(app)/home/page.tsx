@@ -68,7 +68,7 @@ const HomePage = () => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsGeneratingPrompt(true);
-  
+
     if (!data.prompt) {
       toast({
         title: "Error",
@@ -77,7 +77,7 @@ const HomePage = () => {
       setIsGeneratingPrompt(false);
       return;
     }
-  
+
     try {
       const response = await axios.post("/api/promptify", {
         prompt: data.prompt,  // ✅ Use "prompt" instead of "userInput"
@@ -85,7 +85,7 @@ const HomePage = () => {
         length: data.length,
         specific: data.specificInput
       });
-  
+
       setEnhancedPrompt(response.data.enhancedPrompt);
       setIsDrawerOpen(true);
     } catch (error) {
@@ -99,7 +99,7 @@ const HomePage = () => {
       setIsGeneratingPrompt(false);
     }
   };
-  
+
 
   const onClickCopy = () => {
     navigator.clipboard.writeText(enhancedPrompt);
@@ -117,7 +117,7 @@ const HomePage = () => {
 
 
   return (
-    <MantineProvider theme={theme}>
+    <>
       <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br py-12 px-4 sm:px-6 lg:px-8 bg-blue-50 mt-12">
         <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl ">
@@ -274,7 +274,7 @@ const HomePage = () => {
         </Drawer>
 
       </div>
-    </MantineProvider>
+    </>
   );
 };
 

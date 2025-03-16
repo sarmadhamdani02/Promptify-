@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "@/components/ui/toaster";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, createTheme } from "@mantine/core";
 import '@mantine/core/styles.css';
 
 const geistSans = localFont({
@@ -18,6 +18,12 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+// ✅ Define a custom Mantine theme
+const theme = createTheme({
+  primaryColor: "blue",
+  fontFamily: "Inter, sans-serif",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <MantineProvider withGlobalStyles withNormalizeCSS>
+        <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
           <AuthProvider>
             {children}
             <Toaster />
